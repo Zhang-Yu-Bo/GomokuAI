@@ -6,12 +6,12 @@
 #include <limits>
 
 
-class SimulateNode
+class MinimaxNode
 {
 public:
-    SimulateNode(Board *board, int blackOrWhite);
-    SimulateNode* Clone();
-    ~SimulateNode();
+    MinimaxNode(Board *board, int blackOrWhite);
+    MinimaxNode* Clone();
+    ~MinimaxNode();
 
     bool IsSimulateEnd();
     int UpdateStepList();
@@ -47,7 +47,7 @@ private:
      * @param maxOrMin max stage == 1, min stage == -1
      * @return int max score
      */
-    int minimax(SimulateNode *node, int depth, int alpha, int beta, int maxOrMin);
+    int minimax(MinimaxNode *node, int depth, int alpha, int beta, int maxOrMin);
 };
 
 #endif

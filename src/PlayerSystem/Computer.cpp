@@ -1,6 +1,6 @@
 #include "Computer.h"
 
-SimulateNode::SimulateNode(Board *board, int blackOrWhite)
+MinimaxNode::MinimaxNode(Board *board, int blackOrWhite)
 {
     this->currentBoard = board;
     this->validStepList = std::vector<Common::Pos>();
@@ -8,14 +8,14 @@ SimulateNode::SimulateNode(Board *board, int blackOrWhite)
     this->blackOrWhite = blackOrWhite;
 }
 
-SimulateNode *SimulateNode::Clone()
+MinimaxNode *MinimaxNode::Clone()
 {
     int val = this->blackOrWhite == Common::BLACK ? Common::WHITE : Common::BLACK;
-    SimulateNode *copy = new SimulateNode(this->currentBoard->Clone(), val);
+    MinimaxNode *copy = new MinimaxNode(this->currentBoard->Clone(), val);
     return copy;
 }
 
-SimulateNode::~SimulateNode()
+MinimaxNode::~MinimaxNode()
 {
     this->currentBoard->~Board();
     delete this->currentBoard;
@@ -25,14 +25,14 @@ SimulateNode::~SimulateNode()
 
 // Warning: it should call UpdateStepList before call this function
 //          or that may be occour some error
-bool SimulateNode::IsSimulateEnd()
+bool MinimaxNode::IsSimulateEnd()
 {
     return this->currentBoard->CheckBoard(Common::BLACK) 
         || this->currentBoard->CheckBoard(Common::WHITE) 
         || this->validStepList.size() == 0;
 }
 
-int SimulateNode::UpdateStepList()
+int MinimaxNode::UpdateStepList()
 {
     for (int i = 0; i < this->currentBoard->Rows(); i++)
     {
@@ -49,19 +49,19 @@ int SimulateNode::UpdateStepList()
     return this->validStepList.size();
 }
 
-void SimulateNode::Simulate(Common::Pos pos, int val)
+void MinimaxNode::Simulate(Common::Pos pos, int val)
 {
     if (this->currentBoard->GetBoardVal(pos) != -1)
     {
         // Assert
-        std::cout << "Error at void SimulateNode::Simulate(Common::Pos pos, int val)" << std::endl;
+        std::cout << "Error at void MinimaxNode::Simulate(Common::Pos pos, int val)" << std::endl;
         return;
     }
 
     this->currentBoard->SetBoardVal(pos, val);
 }
 
-int SimulateNode::CurrentScore()
+int MinimaxNode::CurrentScore()
 {
     // 2 4 8 16 +Infinity
     int score = 0;
@@ -102,7 +102,7 @@ int SimulateNode::CurrentScore()
     return score;
 }
 
-Common::Pos SimulateNode::MaxScoreStep()
+Common::Pos MinimaxNode::MaxScoreStep()
 {
     if (this->scoreList.size() > 0 && this->scoreList.size() == this->validStepList.size())
     {
@@ -119,19 +119,19 @@ Common::Pos SimulateNode::MaxScoreStep()
         return this->validStepList.at(index);
     }
     // Assert
-    std::cout << "Error at SimulateNode::MaxScoreStep()" << std::endl;
+    std::cout << "Error at MinimaxNode::MaxScoreStep()" << std::endl;
     return Common::Pos(0, 0);
 }
 
-void SimulateNode::SetScoreByIndex(int index, int val)
+void MinimaxNode::SetScoreByIndex(int index, int val)
 {
     this->scoreList.at(index) = val;
 }
 
-Common::Pos SimulateNode::GetValidStepByIndex(int index) {
+Common::Pos MinimaxNode::GetValidStepByIndex(int index) {
     if (index >= this->validStepList.size()) {
         // Assert
-        std::cout << "Error at SimulateNode::GetValidStepByIndex(int index)" << std::endl;
+        std::cout << "Error at MinimaxNode::GetValidStepByIndex(int index)" << std::endl;
         return Common::Pos(0, 0);
     }
 
@@ -148,12 +148,12 @@ Computer::~Computer()
 
 Common::Pos Computer::RequestKeyDown(Board *board)
 {
-    SimulateNode *rootNode = new SimulateNode(board, this->self);
+    MinimaxNode *rootNode = new MinimaxNode(board, this->self);
     minimax(rootNode, 7, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), 1);
     return rootNode->MaxScoreStep();
 }
 
-int Computer::minimax(SimulateNode *node, int depth, int alpha, int beta, int maxOrMin)
+int Computer::minimax(MinimaxNode *node, int depth, int alpha, int beta, int maxOrMin)
 {
 
     int stepListLength = node->UpdateStepList();
@@ -167,7 +167,7 @@ int Computer::minimax(SimulateNode *node, int depth, int alpha, int beta, int ma
         int maxScore = std::numeric_limits<int>::min();
         for (int i = 0; i < stepListLength; i++)
         {
-            SimulateNode *nextNode = node->Clone();
+            MinimaxNode *nextNode = node->Clone();
             nextNode->Simulate(node->GetValidStepByIndex(i), this->self);
             int score = minimax(nextNode, depth - 1, alpha, beta, -1);
 
@@ -185,7 +185,7 @@ int Computer::minimax(SimulateNode *node, int depth, int alpha, int beta, int ma
         int minScore = std::numeric_limits<int>::max();
         for (int i = 0; i < stepListLength; i++)
         {
-            SimulateNode *nextNode = node->Clone();
+            MinimaxNode *nextNode = node->Clone();
             nextNode->Simulate(node->GetValidStepByIndex(i), this->opponent);
             int score = minimax(nextNode, depth - 1, alpha, beta, 1);
             minScore = score < minScore ? score : minScore;
