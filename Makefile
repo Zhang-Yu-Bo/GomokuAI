@@ -1,6 +1,7 @@
 OBJECTS = Game.o Board.o Player.o Common.o Human.o Computer.o
-GAME_SYS_DIR = ./GameSystem
-PLAYER_SYS_DIR = ./PlayerSystem
+SRC_DIR = ./src
+GAME_SYS_DIR = $(SRC_DIR)/GameSystem
+PLAYER_SYS_DIR = $(SRC_DIR)/PlayerSystem
 
 Computer.o: $(PLAYER_SYS_DIR)/Computer.cpp $(PLAYER_SYS_DIR)/Computer.h
 	g++ -c $(PLAYER_SYS_DIR)/Computer.cpp
@@ -8,8 +9,8 @@ Computer.o: $(PLAYER_SYS_DIR)/Computer.cpp $(PLAYER_SYS_DIR)/Computer.h
 Human.o: $(PLAYER_SYS_DIR)/Human.cpp $(PLAYER_SYS_DIR)/Human.h
 	g++ -c $(PLAYER_SYS_DIR)/Human.cpp
 
-Common.o: Common.cpp Common.h
-	g++ -c Common.cpp
+Common.o: $(SRC_DIR)/Common.cpp $(SRC_DIR)/Common.h
+	g++ -c $(SRC_DIR)/Common.cpp
 
 Player.o: $(PLAYER_SYS_DIR)/Player.cpp $(PLAYER_SYS_DIR)/Player.h
 	g++ -c $(PLAYER_SYS_DIR)/Player.cpp
@@ -21,7 +22,7 @@ Game.o: $(GAME_SYS_DIR)/Game.cpp $(GAME_SYS_DIR)/Game.h
 	g++ -c $(GAME_SYS_DIR)/Game.cpp
 
 start: $(OBJECTS)
-	g++ -o main.exe main.cpp $(OBJECTS)
+	g++ -o main.exe $(SRC_DIR)/main.cpp $(OBJECTS)
 
 clean:
 	del *.o
