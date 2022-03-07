@@ -1,4 +1,5 @@
 #include "Common.h"
+#include <iostream>
 
 namespace Common
 {
@@ -16,7 +17,11 @@ namespace Common
     }
 
     int WeightFunction(int val) {
-        return 1 << val;
+        int base = 10; // 1 10 100 1000 
+        int score = 1;
+        for (int i = 0; i < val; i++)
+            score *= base;
+        return score;
     }
 
 }

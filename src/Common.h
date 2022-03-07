@@ -16,6 +16,9 @@ namespace Common
             this->rowY = row;
             this->colX = col;
         }
+        bool operator<(const Pos &cmp) {
+            return (this->rowY < cmp.rowY) || (this->rowY == cmp.rowY && this->colX < cmp.colX);
+        }
     } Pos;
 
     int Clamp(int val, int min, int max);

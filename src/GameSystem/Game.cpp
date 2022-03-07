@@ -34,14 +34,14 @@ bool Game::IsEnd()
         return true;
     
     // check black
-    this->isGameEnd = this->mBoard->CheckBoard(Common::BLACK);
+    this->isGameEnd = this->mBoard->CheckWhoWins(Common::BLACK);
     if (this->isGameEnd) {
         std::cout << "Black Wins."  << std::endl;
         return true;
     }
 
     // check white
-    this->isGameEnd = this->mBoard->CheckBoard(Common::WHITE);
+    this->isGameEnd = this->mBoard->CheckWhoWins(Common::WHITE);
     if (this->isGameEnd) {
         std::cout << "White Wins."  << std::endl;
         return true;

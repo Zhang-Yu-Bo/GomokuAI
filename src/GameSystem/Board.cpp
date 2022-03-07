@@ -5,9 +5,7 @@ Board::Board(int rows, int cols)
     this->rowNum = rows;
     this->colNum = cols;
 
-    this->boardVal = new int[rows * cols];
-    for (int i = 0; i < rows * cols; i++)
-        this->boardVal[i] = -1;
+    this->boardVal = std::vector<int>(rows * cols, -1);
 
     // this->boardVal = new int [rows * cols] {
     //     0, 0, 1, 1, 0,
@@ -20,7 +18,7 @@ Board::Board(int rows, int cols)
 
 Board::~Board()
 {
-    delete this->boardVal;
+    // this->boardVal.erase(this->boardVal.begin(), this->boardVal.end());
     // std::cout << "Yes\n";
 }
 
@@ -67,10 +65,39 @@ int Board::GetBoardVal(Common::Pos pos)
     return this->boardVal[pos.rowY * this->colNum + pos.colX];
 }
 
+std::vector<Common::Pos> Board::GetValidSteps() 
+{
+    std::vector<Common::Pos> list = std::vector<Common::Pos>();
+    for (int i = 0; i < this->rowNum; i++) {
+        for (int j = 0; j < this->colNum; j++) {
+            int val = this->boardVal[i * this->colNum + j];
+            if (val != Common::BLACK && val != Common::WHITE)
+                list.push_back(Common::Pos(i, j));
+        }
+    }
+    return list;
+}
+
+int Board::WhosTurn() {
+    int numOfBlack = 0;
+    int numOfWhite = 0;
+
+    for (int i = 0; i < this->rowNum; i++) {
+        for (int j = 0; j < this->colNum; j++) {
+            if (this->boardVal[i * this->colNum + j] == Common::BLACK)
+                numOfBlack++;
+            if (this->boardVal[i * this->colNum + j] == Common::WHITE)
+                numOfWhite++;
+        }
+    }
+    return numOfBlack == numOfWhite ? Common::BLACK : Common::WHITE;
+}
+
 Board *Board::Clone()
 {
     Board *copy = new Board(this->rowNum, this->colNum);
-    Common::CopyArray(this->boardVal, copy->boardVal, this->rowNum * this->colNum);
+    copy->boardVal = this->boardVal;
+    // Common::CopyArray(this->boardVal, copy->boardVal, this->rowNum * this->colNum);
     return copy;
 }
 
@@ -79,7 +106,7 @@ int Board::MaxStepNum()
     return this->rowNum * this->colNum;
 }
 
-bool Board::CheckBoard(int val)
+bool Board::CheckWhoWins(int val)
 {
     val = Common::Clamp(val, Common::BLACK, Common::WHITE);
 

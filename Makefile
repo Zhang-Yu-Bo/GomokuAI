@@ -1,9 +1,12 @@
-OBJECTS = Game.o Board.o Player.o Common.o Human.o Computer.o Minimax.o
+OBJECTS = Game.o Board.o Player.o Common.o Human.o Computer.o Minimax.o MonteCarlo.o
 SRC_DIR = ./src
 GAME_SYS_DIR = $(SRC_DIR)/GameSystem
 PLAYER_SYS_DIR = $(SRC_DIR)/PlayerSystem
 
-Minimax.o: $(PLAYER_SYS_DIR)/Minimax.cpp $(PLAYER_SYS_DIR)/Minimax.h
+MonteCarlo.o: $(PLAYER_SYS_DIR)/MonteCarlo.cpp $(PLAYER_SYS_DIR)/MonteCarlo.h $(PLAYER_SYS_DIR)/Computer.h
+	g++ -c $(PLAYER_SYS_DIR)/MonteCarlo.cpp
+
+Minimax.o: $(PLAYER_SYS_DIR)/Minimax.cpp $(PLAYER_SYS_DIR)/Minimax.h $(PLAYER_SYS_DIR)/Computer.h
 	g++ -c $(PLAYER_SYS_DIR)/Minimax.cpp
 
 Computer.o: $(PLAYER_SYS_DIR)/Computer.cpp $(PLAYER_SYS_DIR)/Computer.h

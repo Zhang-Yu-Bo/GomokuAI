@@ -2,10 +2,14 @@
 #define _BOARD_H_
 
 #include <iostream>
+#include <vector>
 #include "../Common.h"
 
 class Board {
 public:
+    Board() {
+        
+    }
     Board(int rows, int cols);
     ~Board();
 
@@ -14,9 +18,12 @@ public:
     void PrintBoard();
     void SetBoardVal(Common::Pos pos, int val);
     int GetBoardVal(Common::Pos pos);
+    std::vector<Common::Pos> GetValidSteps();
+    int WhosTurn();
     Board* Clone();
+    // deprecated
     int MaxStepNum();
-    bool CheckBoard(int val);
+    bool CheckWhoWins(int val);
     int CheckRightByPos(int val, Common::Pos pos);
     int CheckBottomByPos(int val, Common::Pos pos);
     int CheckBottomRightByPos(int val, Common::Pos pos);
@@ -24,7 +31,7 @@ public:
 private:
     int rowNum;
     int colNum;
-    int* boardVal;
+    std::vector<int> boardVal;
 };
 
 #endif

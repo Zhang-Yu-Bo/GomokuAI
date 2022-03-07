@@ -1,4 +1,5 @@
 #include "Minimax.h"
+#include "Computer.h"
 
 MinimaxNode::MinimaxNode(Board *board, int blackOrWhite)
 {
@@ -27,25 +28,15 @@ MinimaxNode::~MinimaxNode()
 //          or that may be occour some error
 bool MinimaxNode::IsSimulateEnd()
 {
-    return this->currentBoard->CheckBoard(Common::BLACK) 
-        || this->currentBoard->CheckBoard(Common::WHITE) 
+    return this->currentBoard->CheckWhoWins(Common::BLACK) 
+        || this->currentBoard->CheckWhoWins(Common::WHITE) 
         || this->validStepList.size() == 0;
 }
 
 int MinimaxNode::UpdateStepList()
 {
-    for (int i = 0; i < this->currentBoard->Rows(); i++)
-    {
-        for (int j = 0; j < this->currentBoard->Cols(); j++)
-        {
-            Common::Pos pos(i, j);
-            if (this->currentBoard->GetBoardVal(pos) == -1)
-            {
-                this->scoreList.push_back(0);
-                this->validStepList.push_back(pos);
-            }
-        }
-    }
+    this->validStepList = this->currentBoard->GetValidSteps();
+    this->scoreList = std::vector<int>(this->validStepList.size(), 0);
     return this->validStepList.size();
 }
 
@@ -136,4 +127,49 @@ Common::Pos MinimaxNode::GetValidStepByIndex(int index) {
     }
 
     return this->validStepList.at(index);
+}
+
+int Computer::minimax(MinimaxNode *node, int depth, int alpha, int beta, int maxOrMin)
+{
+
+    int stepListLength = node->UpdateStepList();
+    if (depth == 0 || node->IsSimulateEnd())
+    {
+        return maxOrMin * node->CurrentScore();
+    }
+
+    if (maxOrMin == 1)
+    {
+        int maxScore = std::numeric_limits<int>::min();
+        for (int i = 0; i < stepListLength; i++)
+        {
+            MinimaxNode *nextNode = node->Clone();
+            nextNode->Simulate(node->GetValidStepByIndex(i), this->self);
+            int score = minimax(nextNode, depth - 1, alpha, beta, -1);
+
+            node->SetScoreByIndex(i, score);
+            maxScore = score > maxScore ? score : maxScore;
+            alpha = score > alpha ? score : alpha;
+
+            if (beta <= alpha)
+                break;
+        }
+        return maxScore;
+    }
+    else
+    {
+        int minScore = std::numeric_limits<int>::max();
+        for (int i = 0; i < stepListLength; i++)
+        {
+            MinimaxNode *nextNode = node->Clone();
+            nextNode->Simulate(node->GetValidStepByIndex(i), this->opponent);
+            int score = minimax(nextNode, depth - 1, alpha, beta, 1);
+            minScore = score < minScore ? score : minScore;
+            beta = score < beta ? score : beta;
+
+            if (beta <= alpha)
+                break;
+        }
+        return minScore;
+    }
 }
